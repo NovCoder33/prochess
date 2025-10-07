@@ -1,6 +1,6 @@
 .popup-inner {
   width: 75%;
-  min-height: 25%;
+  min-height: 12.5%;
   background: var(--moves-list-bg);
   position: absolute;
   border: 8px solid var(--moves-list-bg);

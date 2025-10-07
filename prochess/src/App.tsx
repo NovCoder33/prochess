@@ -24,7 +24,7 @@ function App() {
   const cleanup = useCallback(() => {
     setRoom("");
     setOrientation("");
-    setPlayers("");
+    setPlayers([]);
   }, []);
 
   useEffect(() => {

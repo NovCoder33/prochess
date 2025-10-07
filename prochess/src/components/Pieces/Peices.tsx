@@ -145,6 +145,7 @@ const Pieces = ({ orientation, players, room }) => {
         x,
         y,
         pos,
+        promotesTo: null,
       });
 
       const allPositions = [...appState.position, newPosition];
@@ -194,7 +195,7 @@ const Pieces = ({ orientation, players, room }) => {
           castleDirection,
         })
       ) {
-        dispatch(detectCheckmate());
+        dispatch(detectCheckmate(opponent));
         gameStatus = "checkmate";
       }
 
@@ -266,7 +267,7 @@ const Pieces = ({ orientation, players, room }) => {
           castleDirection: appState.castleDirection,
         })
       ) {
-        dispatch(detectCheckmate());
+        dispatch(detectCheckmate(opponent));
         appState.status = opponent == "w" ? Status.white : Status.black;
       }
     };
@@ -278,21 +279,6 @@ const Pieces = ({ orientation, players, room }) => {
     };
   }, [pos, dispatch]);
 
-  useEffect(() => {
-    console.log(turn);
-
-    const bestMove = minmax(
-      pos.flat(),
-      3,
-      -Infinity,
-      Infinity,
-      ++turn % 2 == 0 ? true : false,
-      Status.ongoing
-    );
-    console.log(
-      `move the ${bestMove.move?.piece} from ${bestMove.move?.fromSquare} to ${bestMove.move?.toSquare}`
-    );
-  }, [appState.position]);
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setMoveCount((moveCount) => (moveCount += 1));

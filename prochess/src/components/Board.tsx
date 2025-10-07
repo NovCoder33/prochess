@@ -26,8 +26,8 @@ const Board = ({ room, orientation, players }) => {
     }
     return null;
   })();
-  let ranks = 0;
-  let files = 0;
+  let ranks = [];
+  let files = [];
   if (orientation === "w") {
     ranks = Array(8)
       .fill("")

@@ -26,7 +26,7 @@ const AppContext = createContext<{
     candidateMoves: [],
     status: "",
     promotionSquare: { rank: 0, file: 0, x: 0, y: 0 },
-    castleDirection: [],
+    castleDirection: { w: "", b: "" },
     movesList: [],
   },
   dispatch: () => {},

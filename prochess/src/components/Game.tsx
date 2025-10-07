@@ -12,8 +12,8 @@ const Game = ({ players, room, username, orientation, cleanup }) => {
   const [over, setOver] = useState("");
 
   useEffect(() => {
-    socket.on("playerDisconnected", (player) => {
-      setOver(`${player.username} has disconnected.`);
+    socket.on("playerDisconnected", () => {
+      setOver(`player has disconnected.`);
     });
   }, []);
 
@@ -39,6 +39,8 @@ const Game = ({ players, room, username, orientation, cleanup }) => {
             socket.emit("closeRoom", { roomId: room });
             setOver("");
           }}
+          handleClose={() => {}}
+          children=""
         />
       </div>
       <div className="room-code">

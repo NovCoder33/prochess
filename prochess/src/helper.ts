@@ -103,9 +103,11 @@ export const getNewMoveNotation = ({
     note += getCharacter(file + 1) + "x";
   }
   note += getCharacter(y + 1) + (x + 1);
-
-  if (promotesTo) {
-    note += "=" + promotesTo.toUpperCase();
+  if (promotesTo != null) {
+    if (promotesTo) {
+      note += "=" + promotesTo.toUpperCase();
+    }
   }
+
   return note;
 };
