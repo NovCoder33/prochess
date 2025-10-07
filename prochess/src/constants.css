@@ -1,0 +1,17 @@
+:root {
+  --tile-size: 75px;
+  --light-tile: white;
+  --dark-tile: rgb(0, 85, 255);
+  --bg-color: rgb(40, 40, 40);
+  --highlight: rgba(50, 50, 50, 0.6);
+  --attacking: rgba(21, 20, 23, 0.8);
+  --moves-list-bg: rgb(30, 30, 30);
+  --text: white;
+  --square-size: 120px;
+}
+
+@media all and (max-width: 450px) {
+  :root {
+    --tile-size: 50px;
+  }
+}

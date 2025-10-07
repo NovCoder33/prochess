@@ -1,0 +1,13 @@
+.roomCode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--moves-list-bg);
+}
+
+.roomCode p {
+  color: white;
+  text-align: center;
+  text-wrap: nowrap;
+  width: 35%;
+}

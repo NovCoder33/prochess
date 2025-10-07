@@ -1,0 +1,98 @@
+@import "./constants.css";
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+.App {
+  width: 100%;
+  display: grid;
+  place-content: center;
+  height: 100vh;
+  background: var(--bg-color);
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+.game-content {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: inherit;
+  justify-content: center;
+  align-items: center;
+}
+.App2 {
+  width: 100%;
+  display: grid;
+  place-content: center;
+  height: 100vh;
+  background: var(--bg-color);
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  grid-template-columns: auto 220px;
+}
+
+button {
+  background: var(--light-tile);
+  color: var(--dark-tile);
+  border: 0 none;
+  padding: 10px 30px;
+  font-size: 1.1em;
+}
+.column1 {
+  position: absolute;
+  left: 0;
+  width: 20%;
+  height: inherit;
+  background-color: var(--light-tile);
+  background-image: linear-gradient(
+      45deg,
+      var(--dark-tile) 25%,
+      transparent 25%
+    ),
+    linear-gradient(-45deg, var(--dark-tile) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--dark-tile) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--dark-tile) 75%);
+  background-size: var(--square-size) var(--square-size);
+  background-position: 0 0, 0 calc(var(--square-size) / 2),
+    calc(var(--square-size) / 2) calc(var(--square-size) / -2),
+    calc(var(--square-size) / -2) 0;
+}
+
+.column2 {
+  position: absolute;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  width: 20%;
+  height: inherit;
+  background-color: var(--light-tile);
+  background-image: linear-gradient(
+      45deg,
+      var(--dark-tile) 25%,
+      transparent 25%
+    ),
+    linear-gradient(-45deg, var(--dark-tile) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--dark-tile) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--dark-tile) 75%);
+  background-size: var(--square-size) var(--square-size);
+  background-position: 0 0, 0 calc(var(--square-size) / 2),
+    calc(var(--square-size) / 2) calc(var(--square-size) / -2),
+    calc(var(--square-size) / -2) 0;
+}
+
+.game-content h1 {
+  font-size: clamp(30px, 6vw + 1rem, 125px);
+  color: white;
+  text-align: center;
+}
+.game-content p {
+  text-align: center;
+  font-size: calc(clamp(30px, 6vw + 1rem, 125px) / 6);
+  color: white;
+}
+
+.c {
+  display: none;
+}

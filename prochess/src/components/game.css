@@ -1,0 +1,14 @@
+.game {
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  display: flex;
+  flex-direction: row;
+}
+
+@media all and (max-width: 450px) {
+  .content {
+    flex-direction: column;
+  }
+}
