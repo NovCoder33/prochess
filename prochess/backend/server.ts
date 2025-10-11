@@ -95,7 +95,7 @@ io.on("connection", (socket) => {
     rooms.set(args.roomId, roomUpdate);
 
     callback(roomUpdate);
-    socket.to(args.roomId).emit("p2Joined", roomUpdate);
+    io.to(args.roomId).emit("p2Joined", roomUpdate);
   });
 
   socket.on("move", (data) => {
