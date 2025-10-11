@@ -3,7 +3,7 @@ import Board from "./Board";
 import MovesList from "./Control/bits/MovesList";
 import Takeback from "./Control/bits/Takeback";
 import Control from "./Control/Control";
-import RoomCode from "./Control/roomCode/roomCode";
+import RoomCode from "./Control/roomCode/RoomCode";
 import CustomDialog from "./CustomDialog";
 import "./game.css";
 import socket from "../socket";
