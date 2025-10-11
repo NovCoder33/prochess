@@ -52,11 +52,6 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("username", (username) => {
-    console.log(`Username received: ${username}`);
-    socket.data.username = username;
-  });
-
   socket.on("createRoom", async (callback) => {
     let roomId = uuidv4();
     roomId = roomId.slice(0, 5) + "-" + roomId.slice(roomId.length - 2);
@@ -75,10 +70,10 @@ io.on("connection", (socket) => {
     if (!room) {
       error = true;
       message = "room DNE";
-    } else if (room?.length <= 0) {
+    } else if (room?.players.length <= 0) {
       error = true;
       message = "room empty";
-    } else if (room?.length >= 2) {
+    } else if (room?.players.length >= 2) {
       error = true;
       message = "room full";
     }

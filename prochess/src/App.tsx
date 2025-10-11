@@ -15,8 +15,7 @@ import InitGame from "./components/InitGame";
 
 function App() {
   const [appState, dispatch] = useReducer(reducer, initGameState);
-  const [username, setUsername] = useState("");
-  const [usernameSubmitted, setUsernameSubmitted] = useState(false);
+
   const [room, setRoom] = useState("");
   const [orientation, setOrientation] = useState("");
   const [players, setPlayers] = useState([]);
@@ -56,7 +55,6 @@ function App() {
               room={room}
               players={players}
               orientation={orientation}
-              username={username}
               cleanup={cleanup}
             ></Game>
           ) : (

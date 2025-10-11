@@ -7,7 +7,7 @@ import RoomCode from "./Control/roomCode/RoomCode";
 import CustomDialog from "./CustomDialog";
 import "./game.css";
 import socket from "../socket";
-const Game = ({ players, room, username, orientation, cleanup }) => {
+const Game = ({ players, room, orientation, cleanup }) => {
   console.log(orientation);
   const [over, setOver] = useState("");
 
