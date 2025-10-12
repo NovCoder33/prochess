@@ -14,7 +14,7 @@ const RoomCode = ({ room, players }) => {
     } else {
       setText("Two players have joined!");
     }
-  }, [players]);
+  }, [[], players, room]);
   return (
     <div className="roomCode">
       <p>Room Code: {rId}</p>
