@@ -101,3 +101,7 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("gameReset");
   });
 });
+
+server.listen(port, () => {
+  console.log(`Backend listening on port ${port}`);
+});
