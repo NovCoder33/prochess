@@ -24,6 +24,10 @@
   margin: 0 0 1em 0;
 }
 
+.content {
+  display: flex;
+}
+
 .game-end-button {
   background: var(--moves-list-bg);
   box-shadow: 0 0 0 3px var(--dark-tile);

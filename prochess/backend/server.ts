@@ -5,11 +5,11 @@ import * as http from "http";
 
 const app = express();
 const server = http.createServer(app);
-const port = process.env.PORT || 8080; // Backend port
+const port = process.env.PORT || 8080;
 
 const io = new Server(server, {
   cors: {
-    origin: "*", // Frontend URL
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -17,7 +17,10 @@ const io = new Server(server, {
 
 const rooms = new Map();
 io.on("connection", (socket) => {
-  console.log(`${socket.id} connected`);
+  socket.on("rematchRequested", (data) => {
+    io.to(data.roomId).emit("rematchRequested");
+  });
+
   socket.on("closeRoom", async (data) => {
     socket.to(data.roomId).emit("closeRoom", data);
     const clientSockets = await io.in(data.roomId).fetchSockets();
@@ -26,27 +29,19 @@ io.on("connection", (socket) => {
     rooms.delete(data.roomId);
   });
   socket.on("disconnect", () => {
-    console.log(`Socket ${socket.id} disconnected`); // Debug log
     const gameRooms = Array.from(rooms.values());
 
     gameRooms.forEach((room) => {
-      const userInRoom = room.players.find((player) => player.id === socket.id); // Fix this line
+      const userInRoom = room.players.find((player) => player.id === socket.id);
 
       if (userInRoom) {
-        console.log(`Found disconnected user: ${userInRoom.username}`); // Debug log
-
-        // Remove the disconnected player from the room
         const updatedPlayers = room.players.filter((p) => p.id !== socket.id);
 
         if (updatedPlayers.length === 0) {
           rooms.delete(room.roomId);
-          console.log(`Deleted empty room: ${room.roomId}`);
         } else {
-          // Update the room with remaining players
           rooms.set(room.roomId, { ...room, players: updatedPlayers });
-          // Notify remaining players
           socket.to(room.roomId).emit("playerDisconnected", userInRoom);
-          console.log(`Notified room ${room.roomId} about disconnect`);
         }
       }
     });
@@ -101,8 +96,8 @@ io.on("connection", (socket) => {
   socket.on("move", (data) => {
     socket.to(data.room).emit("move", data);
   });
-});
 
-server.listen(port, () => {
-  console.log(`Backend listening on port ${port}`);
+  socket.on("newGameStarted", ({ roomId }) => {
+    io.to(roomId).emit("gameReset");
+  });
 });

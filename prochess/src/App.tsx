@@ -25,16 +25,18 @@ function App() {
     setOrientation("");
     setPlayers([]);
   }, []);
-
   useEffect(() => {
-    socket.on("p2Joined", (roomData) => {
-      console.log("roomData", roomData);
+    const handleP2Joined = (roomData) => {
       setPlayers(roomData.players);
-    });
+    };
+
+    socket.on("p2Joined", handleP2Joined);
+
+    return () => {
+      socket.off("p2Joined", handleP2Joined);
+    };
   }, []);
-  useEffect(() => {
-    console.log("Orientation changed to:", orientation);
-  }, [orientation]);
+  useEffect(() => {}, [orientation]);
   const providerState = { appState, dispatch };
   return (
     <AppContext.Provider value={providerState}>

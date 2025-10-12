@@ -41,7 +41,7 @@ const PromotionBox = ({ onClosePopup, room }) => {
     socket.emit("move", {
       moveData,
       room: room.roomId,
-      gameStatus: "promoting", // Send status, don't mutate appState
+      gameStatus: "promoting",
     });
   };
   return (

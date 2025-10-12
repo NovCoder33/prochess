@@ -34,13 +34,12 @@ const Pieces = ({ orientation, players, room }) => {
     let y = Math.floor((e.clientX - left) / size);
     let x = 7 - Math.floor((e.clientY - top) / size);
 
-    // Convert visual coordinates to board coordinates for black player
     if (orientation === "b") {
       x = 7 - x;
       y = 7 - y;
     }
 
-    return { x, y }; // Always return standard board coordinates
+    return { x, y };
   };
 
   const openPromotionBox = ({ rank, file, x, y }) => {
@@ -60,27 +59,16 @@ const Pieces = ({ orientation, players, room }) => {
     }
   };
   const move = (e: DragEvent<HTMLDivElement>) => {
-    const { x, y } = calculateCoords(e); // This is the DROP position (already flipped)
+    const { x, y } = calculateCoords(e);
     const [piece, rank, file] = e.dataTransfer.getData("text").split(",");
-    console.log(players);
-    // Convert rank/file from string to number
     const pieceRank = parseInt(rank);
     const pieceFile = parseInt(file);
-    console.log("=== MOVE DEBUG ===");
-    console.log("Player orientation:", orientation);
-    console.log("Piece being moved:", piece);
-    console.log("Drag data - rank:", pieceRank, "file:", pieceFile);
-    console.log("Drop coordinates - x:", x, "y:", y);
-    console.log("Raw calculateCoords result:", calculateCoords(e));
+
     if (appState.turn != orientation[0]) {
-      console.log("returning at turn !== orientation");
-      console.log(appState.turn);
-      console.log(orientation);
       dispatch(clearCandidates());
       return false;
     }
     if (players.length !== 2) {
-      console.log("returning at len > 2");
       dispatch(clearCandidates());
       return false;
     }
@@ -112,10 +100,8 @@ const Pieces = ({ orientation, players, room }) => {
         const seen = new Map();
 
         arr.forEach((item, index) => {
-          // ✅ Skip empty or invalid positions
           if (!item || !Array.isArray(item)) return;
 
-          // Check if position has any pieces (not all empty)
           const hasPieces = item.some(
             (row) =>
               Array.isArray(row) &&
@@ -133,7 +119,6 @@ const Pieces = ({ orientation, players, room }) => {
           }
         });
 
-        // Return only positions that appear 3+ times
         return Array.from(seen.entries())
           .filter(([key, indices]) => indices.length >= 3)
           .map(([key, indices]) => ({ value: JSON.parse(key), indices }));
@@ -149,21 +134,16 @@ const Pieces = ({ orientation, players, room }) => {
       });
 
       const allPositions = [...appState.position, newPosition];
-      console.log("Checking positions, total count:", allPositions.length);
 
       const threeFoldList = findAllOccurrences(allPositions);
 
-      console.log("Positions that repeat 3+ times:", threeFoldList);
-
       if (threeFoldList.length > 2) {
-        console.log("THREEFOLD REPETITION DETECTED!");
         dispatch(detectThreeFoldRepetition());
         gameStatus = "three_fold";
       }
 
       dispatch(makeNewMove({ newPosition, newMove }));
 
-      console.log("emitted move");
       if (moveCount < 50) {
         if (newMove.includes("x")) {
           setMoveCount(0);
@@ -199,32 +179,28 @@ const Pieces = ({ orientation, players, room }) => {
         gameStatus = "checkmate";
       }
 
-      // Move socket emit inside the valid move block
       socket.emit("move", {
         moveData,
         room: room.roomId,
-        gameStatus, // Send status, don't mutate appState
+        gameStatus,
       });
     }
 
     dispatch(clearCandidates());
   };
-  let x = 0;
 
   useEffect(() => {
     const handleOpponentMove = (data) => {
-      const { moveData, gameStatus } = data; // This is the OPPONENT'S move data
+      const { moveData, gameStatus } = data;
       const opponent = moveData.piece.startsWith("w") ? "b" : "w";
       let newPosition;
 
       if (gameStatus === "promoting") {
-        // Handle promotion moves specially
         newPosition = copyPosition(moveData.currentPosition);
-        newPosition[moveData.rank][moveData.file] = ""; // Remove the pawn
+        newPosition[moveData.rank][moveData.file] = "";
         newPosition[moveData.x][moveData.y] =
-          moveData.piece.charAt(0) + moveData.promotesTo; // Place promoted piece
+          moveData.piece.charAt(0) + moveData.promotesTo;
       } else {
-        // Handle regular moves
         newPosition = arbiter.performMoves(moveData);
       }
 
@@ -289,23 +265,21 @@ const Pieces = ({ orientation, players, room }) => {
     e.preventDefault();
   };
   return (
-    // ✅ Add return statement
     <div ref={ref} onDrop={onDrop} onDragOver={onDragOver} className="pieces">
       {pos.map((r, rank) =>
         r.map((f, file) => {
           if (!pos[rank][file]) return null;
 
-          // Adjust visual position for black player
           const displayRank = orientation === "b" ? 7 - rank : rank;
           const displayFile = orientation === "b" ? 7 - file : file;
 
           return (
             <Piece
               key={rank + file}
-              rank={rank} // Pass actual board coordinates for drag data
-              file={file} // Pass actual board coordinates for drag data
-              displayRank={displayRank} // Pass display coordinates for positioning
-              displayFile={displayFile} // Pass display coordinates for positioning
+              rank={rank}
+              file={file}
+              displayRank={displayRank}
+              displayFile={displayFile}
               piece={pos[rank][file]}
             />
           );

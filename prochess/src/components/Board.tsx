@@ -12,8 +12,6 @@ import { closePopup } from "../reducer/actions/popup";
 const Board = ({ room, orientation, players }) => {
   const { appState, dispatch } = UseAppContext();
   const position = appState.position[appState.position.length - 1];
-  console.log(appState.position);
-  console.log(position);
 
   const isChecked = (() => {
     const isInCheck = arbiter.isPlayerInCheck({
@@ -47,7 +45,6 @@ const Board = ({ room, orientation, players }) => {
     let c = "tile";
     c += (i + j) % 2 == 0 ? " tile--dark" : " tile--light";
 
-    // Convert display coordinates back to board coordinates for comparison
     let boardI = i;
     let boardJ = j;
 
@@ -56,7 +53,6 @@ const Board = ({ room, orientation, players }) => {
       boardJ = 7 - j;
     }
 
-    // Check candidate moves using board coordinates
     if (
       appState.candidateMoves?.find((m) => m[0] === boardI && m[1] === boardJ)
     ) {
@@ -67,7 +63,6 @@ const Board = ({ room, orientation, players }) => {
       }
     }
 
-    // Check if king is in check using board coordinates
     if (isChecked && isChecked[0] === boardI && isChecked[1] === boardJ) {
       c += " checked";
     }
@@ -90,7 +85,7 @@ const Board = ({ room, orientation, players }) => {
       <Pieces orientation={orientation} room={room} players={players} />
       <Popup>
         <PromotionBox onClosePopup={onClosePopup} room={room} />
-        <GameEnd />
+        <GameEnd room={room} />
       </Popup>
 
       <Files files={files}></Files>

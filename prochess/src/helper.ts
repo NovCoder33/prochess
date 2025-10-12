@@ -3,7 +3,6 @@ interface colorType {
   color: string;
 }
 export const createPosition = ({ color }: colorType) => {
-  console.log(color);
   const position = new Array(8).fill("").map(() => new Array(8).fill(""));
   if (color === "w") {
     for (let i = 0; i < 8; i++) {

@@ -30,7 +30,6 @@ export default function InitGame({ setRoom, setOrientation, setPlayers }) {
             if (r.error) {
               return setRoomError(r.message);
             }
-            console.log("response:", r);
             setRoom(r);
             setPlayers(r?.players);
             setOrientation("b");

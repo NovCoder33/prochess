@@ -8,8 +8,8 @@ import CustomDialog from "./CustomDialog";
 import "./game.css";
 import socket from "../socket";
 const Game = ({ players, room, orientation, cleanup }) => {
-  console.log(orientation);
   const [over, setOver] = useState("");
+  const [text, setText] = useState("Waiting for player to join...");
 
   useEffect(() => {
     socket.on("playerDisconnected", () => {
@@ -24,6 +24,13 @@ const Game = ({ players, room, orientation, cleanup }) => {
       }
     });
   }, [room, cleanup]);
+  useEffect(() => {
+    if (players.length === 2) {
+      setText("2 players have joined!");
+    } else {
+      setText("Waiting for player to join...");
+    }
+  }, [players]);
   return (
     <div className="game">
       <div className="content">
@@ -44,7 +51,7 @@ const Game = ({ players, room, orientation, cleanup }) => {
         />
       </div>
       <div className="room-code">
-        <RoomCode room={room} players={players} />
+        <RoomCode room={room} playerText={text} />
       </div>
     </div>
   );

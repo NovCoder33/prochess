@@ -1,3 +1,5 @@
+// WORK IN PROGRESS
+
 import { useEffect } from "react";
 import arbiter from "../arbiter/arbiter";
 import { Status } from "../constant";
@@ -174,7 +176,7 @@ const black_table = Array.from({ length: 12 }, () => new Array(64).fill(0));
 export function generateLegalMoves(position, turn) {
   const prevPosition = position[position.length - 2];
   const currentPosition = position[position.length - 1];
-  const childPositions = []; // Fixed: proper initialization
+  const childPositions = [];
 
   let moves;
   for (let r = 0; r < 8; r++) {
@@ -191,7 +193,6 @@ export function generateLegalMoves(position, turn) {
         piece: piece,
       });
 
-      // Fixed: iterate over moves, not position
       for (const [newRank, newFile] of moves) {
         const newBoard = currentPosition.map((row) => [...row]);
         newBoard[newRank][newFile] = piece;
@@ -201,7 +202,7 @@ export function generateLegalMoves(position, turn) {
     }
   }
 
-  return childPositions; // Fixed: return boards, not coordinates
+  return childPositions;
 }
 
 function pieceToCode(piece: string): number {
@@ -235,7 +236,6 @@ export function init_tables() {
     pc += 2;
     p += 1;
   }
-  console.log("Tables initialized! Sample:", white_table[0][8]);
 }
 function evaluate(board) {
   let game_phase = 0;
@@ -295,11 +295,11 @@ export function minmax(
 
     for (const cp of childPos) {
       const evalu = minmax(cp, depth - 1, a, b, false, Status.ongoing, move);
-      const evalScore = evalu.score; // Access the score property
+      const evalScore = evalu.score;
 
       if (evalScore > maxEval) {
         maxEval = evalScore;
-        bestMove = cp; // Store the best position
+        bestMove = cp;
       }
 
       a = Math.max(a, evalScore);
@@ -308,7 +308,6 @@ export function minmax(
       }
     }
 
-    // Convert best position to move notation
     const moveNotation = bestMove ? calculateMoveDiff(pos, bestMove) : null;
     return { score: maxEval, move: moveNotation };
   } else {
@@ -350,7 +349,7 @@ function calculateMoveDiff(oldPos: any[], newPos: any[]) {
         to = i;
       }
       if (oldPos[i] && newPos[i] && oldPos[i] !== newPos[i]) {
-        to = i; // Capture
+        to = i;
       }
     }
   }
@@ -366,7 +365,7 @@ function calculateMoveDiff(oldPos: any[], newPos: any[]) {
 
 function indexToSquare(index: number): string {
   const files = ["a", "b", "c", "d", "e", "f", "g", "h"].reverse();
-  const rank = Math.floor(index / 8) + 1; // Fixed: correct rank calculation
+  const rank = Math.floor(index / 8) + 1;
   const file = files[index % 8];
   return `${file}${rank}`;
 }

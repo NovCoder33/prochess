@@ -12,6 +12,7 @@ const actionTypes = {
   TAKEBACK: "TAKEBACK ",
   FIFTY_MOVE: "FIFTY MOVE",
   THREE_FOLD: "THREE_FOLD",
+  INCREASE: "INCREASE",
 };
 
 export default actionTypes;

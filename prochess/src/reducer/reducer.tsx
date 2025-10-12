@@ -73,6 +73,7 @@ export const reducer = (state, action) => {
         status: Status.three_fold,
       };
     }
+
     case actionTypes.CHECKMATE: {
       return {
         ...state,

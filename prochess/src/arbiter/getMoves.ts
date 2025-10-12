@@ -425,9 +425,6 @@ export const getKingPos = (positionAfterMoves, player) => {
   let kingPos;
 
   positionAfterMoves.forEach((rank, x) => {
-    console.log("Rank at index", x, ":", rank, "Type:", typeof rank);
-
-    // Skip if rank is not an array (like when it's a string)
     if (!Array.isArray(rank)) {
       console.warn(`Skipping rank ${x} - it's a ${typeof rank}:`, rank);
       return;
