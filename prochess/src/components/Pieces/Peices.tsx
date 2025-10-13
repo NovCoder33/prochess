@@ -179,11 +179,19 @@ const Pieces = ({ orientation, players, room }) => {
         gameStatus = "checkmate";
       }
 
-      socket.emit("move", {
-        moveData,
-        room: room.roomId,
-        gameStatus,
-      });
+      socket.emit(
+        "move",
+        {
+          moveData,
+          room: room.roomId,
+          gameStatus,
+        },
+        (acknowledgment) => {
+          if (!acknowledgment) {
+            console.error("Move not acknowledged by server");
+          }
+        }
+      );
     }
 
     dispatch(clearCandidates());
@@ -247,11 +255,22 @@ const Pieces = ({ orientation, players, room }) => {
         appState.status = opponent == "w" ? Status.white : Status.black;
       }
     };
+    const handleDisconnect = () => {
+      console.log("⚠️ Socket disconnected");
+    };
 
+    const handleReconnect = () => {
+      console.log("✅ Socket reconnected");
+    };
     socket.on("move", handleOpponentMove);
+
+    socket.on("disconnect", handleDisconnect);
+    socket.on("connect", handleReconnect);
 
     return () => {
       socket.off("move", handleOpponentMove);
+      socket.off("disconnect", handleDisconnect);
+      socket.off("connect", handleReconnect);
     };
   }, [pos, dispatch]);
 

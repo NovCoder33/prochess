@@ -93,8 +93,9 @@ io.on("connection", (socket) => {
     io.to(args.roomId).emit("p2Joined", roomUpdate);
   });
 
-  socket.on("move", (data) => {
+  socket.on("move", (data, callback) => {
     socket.to(data.room).emit("move", data);
+    if (callback) callback({ success: true });
   });
 
   socket.on("newGameStarted", ({ roomId }) => {
