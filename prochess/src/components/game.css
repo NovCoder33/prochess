@@ -1,14 +1,47 @@
 .game {
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-color);
 }
 .content {
   display: flex;
   flex-direction: row;
+  background-color: var(--bg-color);
 }
 
-@media all and (max-width: 450px) {
+@media (max-width: 576px) {
   .content {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 1023px) {
+  .game {
+    margin-left: 45%;
+    margin-top: 80%;
+  }
+  .content {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 576px) {
+  .game {
+    margin-left: 62.5%;
+    margin-top: 20%;
+  }
+  .game {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
+@media (max-width: 320px) {
+  .game {
+    margin-left: 68.5%;
+    margin-top: 20%;
+  }
+  .game {
+    display: flex;
+    flex-direction: column-reverse;
   }
 }

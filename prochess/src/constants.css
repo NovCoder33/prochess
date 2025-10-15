@@ -9,9 +9,21 @@
   --text: white;
   --square-size: 120px;
 }
-
-@media all and (max-width: 450px) {
+@media (max-width: 1199px) {
   :root {
-    --tile-size: 50px;
+    --tile-size: 60px;
+    --square-size: 90px;
+  }
+}
+@media (max-width: 576px) {
+  :root {
+    --tile-size: 40px;
+    --square-size: 70px;
+  }
+}
+@media (max-width: 320px) {
+  :root {
+    --tile-size: 36px;
+    --square-size: 64px;
   }
 }

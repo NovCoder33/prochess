@@ -5,3 +5,11 @@
   justify-content: space-around;
   color: var(--text);
 }
+@media (max-width: 1023px) {
+  .ranks span {
+    font-size: 80%;
+  }
+  .ranks {
+    padding-right: 25%;
+  }
+}

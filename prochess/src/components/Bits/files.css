@@ -6,3 +6,17 @@
   color: var(--text);
   height: calc(0.25 * var(--tile-size));
 }
+
+@media (max-width: 1023px) {
+  .files span {
+    font-size: 80%;
+  }
+}
+@media (max-width: 320px) {
+  .files span {
+    font-size: 80%;
+  }
+  .files {
+    margin-top: 1.5%;
+  }
+}

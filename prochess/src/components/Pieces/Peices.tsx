@@ -279,6 +279,57 @@ const Pieces = ({ orientation, players, room }) => {
     setMoveCount((moveCount) => (moveCount += 1));
     move(e);
   };
+  const handleTouchDrop = (e: TouchEvent) => {
+    e.preventDefault();
+
+    // Convert touch event to drag event format
+    const syntheticDragEvent = {
+      preventDefault: () => {},
+      clientX: (e as any).clientX,
+      clientY: (e as any).clientY,
+      dataTransfer: (e as any).dataTransfer,
+    } as React.DragEvent<HTMLDivElement>;
+
+    setMoveCount((moveCount) => moveCount + 1);
+    move(syntheticDragEvent);
+  };
+
+  useEffect(() => {
+    const piecesElement = ref.current;
+
+    const handleTouchDrop = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { clientX, clientY, piece, rank, file } = customEvent.detail;
+
+      // Create synthetic drag event
+      const syntheticEvent = {
+        preventDefault: () => {},
+        clientX,
+        clientY,
+        dataTransfer: {
+          getData: (type: string) => {
+            if (type === "text") {
+              return `${piece},${rank},${file}`;
+            }
+            return "";
+          },
+        },
+      } as React.DragEvent<HTMLDivElement>;
+
+      setMoveCount((moveCount) => moveCount + 1);
+      move(syntheticEvent);
+    };
+
+    if (piecesElement) {
+      piecesElement.addEventListener("touchDrop", handleTouchDrop);
+    }
+
+    return () => {
+      if (piecesElement) {
+        piecesElement.removeEventListener("touchDrop", handleTouchDrop);
+      }
+    };
+  }, [pos, appState, move]);
 
   const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
