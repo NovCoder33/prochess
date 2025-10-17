@@ -18,12 +18,14 @@ import {
 } from "../../reducer/actions/game";
 import { getCastleDirections } from "../../arbiter/getMoves";
 import { init_tables, minmax } from "../../ai/evaluation";
+
 const Pieces = ({ orientation, players, room }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { appState, dispatch } = UseAppContext();
   const pos = appState.position[appState.position.length - 1];
   const [moveCount, setMoveCount] = useState(0);
   let turn = useRef(-1);
+
   const calculateCoords = (e: React.DragEvent<HTMLDivElement>) => {
     const { width, left, top } = ref.current?.getBoundingClientRect() ?? {
       width: 0,
@@ -58,6 +60,7 @@ const Pieces = ({ orientation, players, room }) => {
       dispatch(updateCastling({ direction }));
     }
   };
+
   const move = (e: DragEvent<HTMLDivElement>) => {
     const { x, y } = calculateCoords(e);
     const [piece, rank, file] = e.dataTransfer.getData("text").split(",");
@@ -276,49 +279,166 @@ const Pieces = ({ orientation, players, room }) => {
 
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setMoveCount((moveCount) => (moveCount += 1));
+    setMoveCount((moveCount) => moveCount + 1);
     move(e);
   };
-  const handleTouchDrop = (e: TouchEvent) => {
+
+  const handleTouchDrop = (e: Event) => {
     e.preventDefault();
 
-    // Convert touch event to drag event format
-    const syntheticDragEvent = {
-      preventDefault: () => {},
-      clientX: (e as any).clientX,
-      clientY: (e as any).clientY,
-      dataTransfer: (e as any).dataTransfer,
-    } as React.DragEvent<HTMLDivElement>;
+    const customEvent = e as CustomEvent;
+    const { piece, rank, file, targetRank, targetFile } = customEvent.detail;
 
-    setMoveCount((moveCount) => moveCount + 1);
-    move(syntheticDragEvent);
+    let x = targetRank;
+    let y = targetFile;
+
+    if (orientation === "b") {
+      x = 7 - x;
+      y = 7 - y;
+    }
+
+    console.log(
+      `Touch drop - piece: ${piece}, from: (${rank}, ${file}), to: (${x}, ${y})`
+    );
+
+    const pieceRank = parseInt(rank);
+    const pieceFile = parseInt(file);
+
+    if (appState.turn != orientation[0]) {
+      dispatch(clearCandidates());
+      return;
+    }
+    if (players.length !== 2) {
+      dispatch(clearCandidates());
+      return;
+    }
+
+    const opponent = piece.startsWith("w") ? "b" : "w";
+    const castleDirection =
+      appState.castleDirection[`${piece.startsWith("b") ? "w" : "b"}`];
+
+    if (appState.candidateMoves?.find((m) => m[0] === x && m[1] === y)) {
+      if ((piece === "wp" && x === 7) || (piece === "bp" && x === 0)) {
+        openPromotionBox({ rank: pieceRank, file: pieceFile, x, y });
+        setMoveCount((moveCount) => moveCount + 1);
+        dispatch(clearCandidates());
+        return;
+      }
+      if (piece.endsWith("r") || piece.endsWith("k")) {
+        updateCastlingState({ piece, rank: pieceRank, file: pieceFile });
+      }
+
+      setMoveCount((moveCount) => moveCount + 1);
+
+      const moveData = {
+        currentPosition: pos,
+        piece,
+        rank: pieceRank,
+        file: pieceFile,
+        x,
+        y,
+        promotesTo: "q",
+      };
+      const newPosition = arbiter.performMoves(moveData);
+      let gameStatus = null;
+
+      const findAllOccurrences = (arr) => {
+        const seen = new Map();
+        arr.forEach((item, index) => {
+          if (!item || !Array.isArray(item)) return;
+          const hasPieces = item.some(
+            (row) =>
+              Array.isArray(row) &&
+              row.some((square) => square !== "" && square !== null)
+          );
+          if (!hasPieces) return;
+          const key = JSON.stringify(item);
+          if (seen.has(key)) {
+            seen.get(key).push(index);
+          } else {
+            seen.set(key, [index]);
+          }
+        });
+        return Array.from(seen.entries())
+          .filter(([key, indices]) => indices.length >= 3)
+          .map(([key, indices]) => ({ value: JSON.parse(key), indices }));
+      };
+
+      const newMove = getNewMoveNotation({
+        piece,
+        rank: pieceRank,
+        file: pieceFile,
+        x,
+        y,
+        pos,
+        promotesTo: null,
+      });
+
+      const allPositions = [...appState.position, newPosition];
+      const threeFoldList = findAllOccurrences(allPositions);
+
+      if (threeFoldList.length > 2) {
+        dispatch(detectThreeFoldRepetition());
+        gameStatus = "three_fold";
+      }
+
+      dispatch(makeNewMove({ newPosition, newMove }));
+
+      if (moveCount < 50) {
+        if (newMove.includes("x")) {
+          setMoveCount(0);
+        }
+        if (piece.endsWith("p")) {
+          setMoveCount(0);
+        }
+      } else {
+        dispatch(detect50MoveRule());
+        gameStatus = "fifty";
+      }
+
+      if (arbiter.insufficientMaterial(newPosition)) {
+        dispatch(detectInsufficientMaterial());
+        gameStatus = "insufficient";
+      } else if (
+        arbiter.isStalemate({
+          position: newPosition,
+          player: opponent,
+          castleDirection,
+        })
+      ) {
+        dispatch(detectStalemate());
+        gameStatus = "stalemate";
+      } else if (
+        arbiter.isCheckmate({
+          position: newPosition,
+          player: opponent,
+          castleDirection,
+        })
+      ) {
+        dispatch(detectCheckmate(opponent));
+        gameStatus = "checkmate";
+      }
+
+      socket.emit(
+        "move",
+        {
+          moveData,
+          room: room.roomId,
+          gameStatus,
+        },
+        (acknowledgment) => {
+          if (!acknowledgment) {
+            console.error("Move not acknowledged by server");
+          }
+        }
+      );
+    }
+
+    dispatch(clearCandidates());
   };
 
   useEffect(() => {
     const piecesElement = ref.current;
-
-    const handleTouchDrop = (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const { clientX, clientY, piece, rank, file } = customEvent.detail;
-
-      // Create synthetic drag event
-      const syntheticEvent = {
-        preventDefault: () => {},
-        clientX,
-        clientY,
-        dataTransfer: {
-          getData: (type: string) => {
-            if (type === "text") {
-              return `${piece},${rank},${file}`;
-            }
-            return "";
-          },
-        },
-      } as React.DragEvent<HTMLDivElement>;
-
-      setMoveCount((moveCount) => moveCount + 1);
-      move(syntheticEvent);
-    };
 
     if (piecesElement) {
       piecesElement.addEventListener("touchDrop", handleTouchDrop);
@@ -329,11 +449,12 @@ const Pieces = ({ orientation, players, room }) => {
         piecesElement.removeEventListener("touchDrop", handleTouchDrop);
       }
     };
-  }, [pos, appState, move]);
+  }, [pos, appState, moveCount]);
 
   const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
+
   return (
     <div ref={ref} onDrop={onDrop} onDragOver={onDragOver} className="pieces">
       {pos.map((r, rank) =>

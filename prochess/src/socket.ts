@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
-
-export const socket = io("https://prochess-backend.onrender.com", {
+//https://prochess-backend.onrender.com
+export const socket = io("http://localhost:8080", {
   reconnection: true,
   reconnectionDelay: 1000,
   reconnectionAttempts: 15,

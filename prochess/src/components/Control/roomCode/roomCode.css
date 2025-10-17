@@ -11,3 +11,14 @@
   text-wrap: nowrap;
   width: 35%;
 }
+
+@media (max-width: 1023px) {
+  .roomCode {
+    margin-left: 5%;
+  }
+}
+@media (max-width: 576px) {
+  .roomCode {
+    margin-left: 3%;
+  }
+}
