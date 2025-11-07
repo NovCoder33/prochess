@@ -47,6 +47,10 @@ function App() {
             <>
               <h1>Prochess</h1>
               <p>Become a chess pro</p>
+              <p>
+                (Game loading times can take up to 2 minutes due to server
+                slowness.)
+              </p>
             </>
           ) : (
             <p className="c">{""}</p>
